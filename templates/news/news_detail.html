@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ news.title }} - IT-INFO{% endblock %}
+
+{% block content %}
+<section class="news_detail">
+    <div class="container">
+        <a href="{% url 'news:news_list' %}" class="back_link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Все новости
+        </a>
+
+        <article class="news_detail_content">
+            <header class="news_detail_header">
+                <span class="news_tag news_tag--{{ news.category }}">{{ news.get_category_display_ru }}</span>
+                <h1 class="news_detail_title">{{ news.title }}</h1>
+                <div class="news_detail_meta">
+                    <span class="news_author">{{ news.author.username|default:"Анон" }}</span>
+                    <span class="news_date">{{ news.created_at|date:"d E Y" }}</span>
+                    <span class="news_views">{{ news.views }} просмотров</span>
+                </div>
+            </header>
+
+            {% if news.image %}
+            <div class="news_detail_image">
+                <img src="{{ news.image.url }}" alt="{{ news.title }}">
+            </div>
+            {% endif %}
+
+            <div class="news_detail_body">
+                <p class="news_excerpt">{{ news.excerpt }}</p>
+                <div class="news_content">
+                    {{ news.content|linebreaks }}
+                </div>
+            </div>
+
+            <footer class="news_detail_footer">
+                {% if user.is_authenticated %}
+                <div class="save_block">
+                    {% if is_saved %}
+                    <a href="{% url 'news:unsave_news' news.slug %}" class="save_link saved">Сохранено</a>
+                    {% else %}
+                    <a href="{% url 'news:save_news' news.slug %}" class="save_link">Сохранить</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+                <div class="share_block">
+                    <span>Поделиться:</span>
+                    <a href="#" class="share_link">Telegram</a>
+                    <a href="#" class="share_link">Twitter</a>
+                    <a href="#" class="share_link">VK</a>
+                </div>
+            </footer>
+        </article>
+
+        <section class="related_news">
+            <h2 class="section_title">Похожие новости</h2>
+            <div class="related_grid">
+                {% for related in related_news %}
+                <article class="news_card">
+                    <div class="news_image">
+                        {% if related.image %}
+                        <img src="{{ related.image.url }}" alt="{{ related.title }}">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&q=80" alt="{{ related.title }}">
+                        {% endif %}
+                        <span class="news_tag news_tag--{{ related.category }}">{{ related.get_category_display_ru }}</span>
+                    </div>
+                    <div class="news_content">
+                        <span class="news_date">{{ related.created_at|date:"d E Y" }}</span>
+                        <h3 class="news_title">{{ related.title }}</h3>
+                        <div class="news_meta">
+                            <span class="news_views">{{ related.views }} просмотров</span>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</section>
+{% endblock %}

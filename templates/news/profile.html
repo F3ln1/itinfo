@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Личный кабинет - IT-INFO{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="container">
+        <div class="profile-header">
+            <h1>Личный кабинет</h1>
+            <p class="profile-username">Пользователь: <strong>{{ user.username }}</strong></p>
+            <p class="profile-email">Email: <strong>{{ user.email }}</strong></p>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-card">
+                <span class="stat-number">{{ saved_count }}</span>
+                <span class="stat-label">Сохранённые</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ pending_count }}</span>
+                <span class="stat-label">На модерации</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ published_count }}</span>
+                <span class="stat-label">Опубликовано</span>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <div class="profile-column">
+                <h2>На модерации <span class="section-count">{{ pending_count }}</span></h2>
+                {% if pending_news %}
+                <div class="profile-list">
+                    {% for news in pending_news %}
+                    <article class="profile-row">
+                        <div class="profile-row_content">
+                            <span class="news_tag {{ news.get_category_tag_class }}">{{ news.get_category_display_ru }}</span>
+                            <h3 class="profile-row_title">{{ news.title }}</h3>
+                            <span class="profile-row_date">{{ news.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-message">Нет новостей на модерации</p>
+                {% endif %}
+            </div>
+
+            <div class="profile-column">
+                <h2>Опубликовано <span class="section-count">{{ published_count }}</span></h2>
+                {% if published_news %}
+                <div class="profile-list">
+                    {% for news in published_news %}
+                    <article class="profile-row">
+                        <div class="profile-row_content">
+                            <span class="news_tag {{ news.get_category_tag_class }}">{{ news.get_category_display_ru }}</span>
+                            <h3 class="profile-row_title">
+                                <a href="{% url 'news:news_detail' news.slug %}">{{ news.title }}</a>
+                            </h3>
+                            <div class="profile-row_meta">
+                                <span>{{ news.created_at|date:"d.m.Y" }}</span>
+                                <span>{{ news.views }} просмотров</span>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+                {% if published_count > 6 %}
+                <a href="{% url 'news:news_list' %}?author={{ user.username }}" class="profile-show-all">Все опубликованные →</a>
+                {% endif %}
+                {% else %}
+                <p class="empty-message">Нет опубликованных новостей</p>
+                {% endif %}
+            </div>
+
+            <div class="profile-column">
+                <h2>Отклонено <span class="section-count">{{ rejected_count }}</span></h2>
+                {% if rejected_news %}
+                <div class="profile-list">
+                    {% for news in rejected_news %}
+                    <article class="profile-row">
+                        <div class="profile-row_content">
+                            <span class="news_tag news_tag--rejected">Отклонено</span>
+                            <h3 class="profile-row_title">{{ news.title }}</h3>
+                            <p class="profile-row_reason">Причина: {{ news.rejection_reason }}</p>
+                            <span class="profile-row_date">{{ news.updated_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-message">Нет отклонённых новостей</p>
+                {% endif %}
+            </div>
+
+            <div class="profile-column">
+                <h2>Сохранённые <span class="section-count">{{ saved_count }}</span></h2>
+                {% if saved_news %}
+                <div class="profile-list">
+                    {% for item in saved_news %}
+                    <article class="profile-row">
+                        <div class="profile-row_content">
+                            <span class="news_tag {{ item.news.get_category_tag_class }}">{{ item.news.get_category_display_ru }}</span>
+                            <h3 class="profile-row_title">
+                                <a href="{% url 'news:news_detail' item.news.slug %}">{{ item.news.title }}</a>
+                            </h3>
+                            <span class="profile-row_date">{{ item.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="empty-message">У вас пока нет сохранённых новостей</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}IT-INFO{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
+    {% load static %}<link rel="stylesheet" href="{% static 'css/style.css' %}?v=8">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="{% url 'news:home' %}" class="logo">IT-INFO</a>
+
+            <form class="search_form" action="{% url 'news:news_list' %}" method="get">
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" class="search_input" name="q" placeholder="Поиск новостей...">
+            </form>
+
+            <nav class="header_nav">
+                <a href="{% url 'news:news_list' %}" class="header_link">Новости</a>
+                <a href="#categories" class="header_link">Категории</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'news:profile' %}" class="header_link">{{ user.username }}</a>
+                <a href="{% url 'news:create_news' %}" class="header_link">Создать</a>
+                <a href="{% url 'news:logout' %}" class="header_link">Выйти</a>
+                {% else %}
+                <a href="{% url 'news:register' %}" class="header_link">Регистрация</a>
+                <a href="{% url 'news:login' %}" class="header_link header_link--btn">Войти</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer_grid">
+                <div class="footer_brand">
+                    <a href="{% url 'news:home' %}" class="logo">IT-INFO</a>
+                    <p class="footer_desc">Ваш источник актуальных новостей из мира IT, науки и техники</p>
+                </div>
+                <div class="footer_links">
+                    <h4>Навигация</h4>
+                    <a href="{% url 'news:news_list' %}">Новости</a>
+                    <a href="#categories">Категории</a>
+                    <a href="#">О проекте</a>
+                    <a href="#">Контакты</a>
+                </div>
+                <div class="footer_links">
+                    <h4>Категории</h4>
+                    <a href="{% url 'news:news_list' %}?category=it">IT-технологии</a>
+                    <a href="{% url 'news:news_list' %}?category=science">Наука</a>
+                    <a href="{% url 'news:news_list' %}?category=tech">Техника</a>
+                </div>
+                <div class="footer_links">
+                    <h4>Связаться</h4>
+                    <a href="#">info@itinfo.ru</a>
+                    <a href="#">Telegram</a>
+                    <a href="#">Twitter</a>
+                    <a href="#">YouTube</a>
+                </div>
+            </div>
+            <div class="footer_bottom">
+                <p>&copy; 2026 IT-INFO. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

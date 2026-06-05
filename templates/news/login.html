@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Вход - IT-INFO{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1 class="auth-title">Вход в аккаунт</h1>
+                <p class="auth-subtitle">Войдите, чтобы получить доступ к личному кабинету</p>
+            </div>
+            
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="form-error">
+                    {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <span class="field-error">{{ field.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                
+                <button type="submit" class="auth-btn">Войти</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Нет аккаунта? <a href="{% url 'news:register' %}">Зарегистрироваться</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

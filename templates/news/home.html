@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}IT-INFO - Главная{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <div class="hero_content">
+            <span class="hero_badge">Актуальные новости</span>
+            <h1 class="hero_title">Мир технологий, науки и инноваций</h1>
+            <p class="hero_text">Будьте в курсе последних событий в мире IT, науки и техники. Актуальные новости и аналитика каждый день.</p>
+            <div class="hero_stats">
+                <div class="hero_stat">
+                    <span class="hero_stat-num">{{ news_list|length|add:100 }}</span>
+                    <span class="hero_stat-label">Новостей</span>
+                </div>
+                <div class="hero_stat">
+                    <span class="hero_stat-num">50+</span>
+                    <span class="hero_stat-label">Авторов</span>
+                </div>
+                <div class="hero_stat">
+                    <span class="hero_stat-num">10K+</span>
+                    <span class="hero_stat-label">Читателей</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="categories" id="categories">
+    <div class="container">
+        <div class="categories_grid">
+            <a href="{% url 'news:news_list' %}?category=it" class="category_card" data-category="it">
+                <div class="category_icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                </div>
+                <h3 class="category_title">IT-технологии</h3>
+                <p class="category_desc">Программирование, AI, облачные технологии</p>
+            </a>
+            <a href="{% url 'news:news_list' %}?category=science" class="category_card" data-category="science">
+                <div class="category_icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 3h6v11l3 3 3-3V3"></path>
+                        <path d="M6 21h12"></path>
+                        <circle cx="12" cy="14" r="3"></circle>
+                    </svg>
+                </div>
+                <h3 class="category_title">Наука</h3>
+                <p class="category_desc">Исследования, открытия, космос</p>
+            </a>
+            <a href="{% url 'news:news_list' %}?category=tech" class="category_card" data-category="tech">
+                <div class="category_icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                </div>
+                <h3 class="category_title">Техника</h3>
+                <p class="category_desc">Гаджеты, робототехника, электроника</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="news_section" id="news">
+    <div class="container">
+        <div class="news_layout">
+            <div class="news_main">
+                <div class="section_header">
+                    <h2 class="section_title">Последние новости</h2>
+                    <div class="news_tabs">
+                        <a href="{% url 'news:news_list' %}" class="news_tab {% if not current_category %}active{% endif %}">Все</a>
+                        <a href="{% url 'news:news_list' %}?category=it" class="news_tab {% if current_category == 'it' %}active{% endif %}">IT</a>
+                        <a href="{% url 'news:news_list' %}?category=science" class="news_tab {% if current_category == 'science' %}active{% endif %}">Наука</a>
+                        <a href="{% url 'news:news_list' %}?category=tech" class="news_tab {% if current_category == 'tech' %}active{% endif %}">Техника</a>
+                    </div>
+                </div>
+                <div class="news_grid" id="newsGrid">
+                    {% if featured_news %}
+                    <article class="news_card news_card--featured">
+                        <div class="news_image">
+                            {% if featured_news.image %}
+                            <img src="{{ featured_news.image.url }}" alt="{{ featured_news.title }}">
+                            {% else %}
+                            <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80" alt="{{ featured_news.title }}">
+                            {% endif %}
+                            <span class="news_tag news_tag--{{ featured_news.category }}">{{ featured_news.get_category_display_ru }}</span>
+                        </div>
+                        <div class="news_content">
+                            <span class="news_date">{{ featured_news.created_at|date:"d E Y" }}</span>
+                            <h3 class="news_title">{{ featured_news.title }}</h3>
+                            <p class="news_excerpt">{{ featured_news.excerpt }}</p>
+                            <div class="news_meta">
+                                <span class="news_author">{{ featured_news.author }}</span>
+                                <span class="news_views">{{ featured_news.views }} просмотров</span>
+                            </div>
+                            <a href="{% url 'news:news_detail' featured_news.slug %}" class="btn-read">Читать далее</a>
+                        </div>
+                    </article>
+                    {% endif %}
+
+                    {% for news in news_list %}
+                    <article class="news_card">
+                        <div class="news_image">
+                            {% if news.image %}
+                            <img src="{{ news.image.url }}" alt="{{ news.title }}">
+                            {% else %}
+                            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&q=80" alt="{{ news.title }}">
+                            {% endif %}
+                            <span class="news_tag news_tag--{{ news.category }}">{{ news.get_category_display_ru }}</span>
+                        </div>
+                        <div class="news_content">
+                            <span class="news_date">{{ news.created_at|date:"d E Y" }}</span>
+                            <h3 class="news_title">{{ news.title }}</h3>
+                            <p class="news_excerpt">{{ news.excerpt }}</p>
+                            <div class="news_meta">
+                                <span class="news_author">{{ news.author }}</span>
+                                <span class="news_views">{{ news.views }} просмотров</span>
+                            </div>
+                        </div>
+                    </article>
+                    {% empty %}
+                    <p class="no-news">Новостей пока нет. Добавьте первую новость через админку!</p>
+                    {% endfor %}
+                </div>
+                <div class="load_more">
+                    <a href="{% url 'news:news_list' %}" class="btn-more">Все новости</a>
+                </div>
+            </div>
+            <aside class="news_sidebar">
+                <div class="sidebar_block">
+                    <h3 class="sidebar_title">Популярное</h3>
+                    <div class="popular_news">
+                        {% for news in news_list|slice:":4" %}
+                        <a href="{% url 'news:news_detail' news.slug %}" class="popular_card">
+                            <span class="popular_num">0{{ forloop.counter }}</span>
+                            <div class="popular_content">
+                                <h4>{{ news.title|truncatechars:40 }}</h4>
+                                <span>{{ news.views }} просмотров</span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="sidebar_block">
+                    <h3 class="sidebar_title">Подписка</h3>
+                    <p class="sidebar_text">Получайте самые важные новости на вашу почту</p>
+                    <form class="subscribe_form">
+                        <input type="email" placeholder="Ваш email" class="subscribe_input">
+                        <button type="submit" class="subscribe_btn">Подписаться</button>
+                    </form>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,52 @@
+Performing system checks...
+
+System check identified no issues (0 silenced).
+May 14, 2026 - 21:04:21
+Django version 6.0.4, using settings 'itinfo.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+[14/May/2026 21:09:05] "GET / HTTP/1.1" 200 22554
+[14/May/2026 21:09:05] "GET /static/css/style.css?v=8 HTTP/1.1" 304 0
+[14/May/2026 21:09:09] "GET /login/ HTTP/1.1" 200 4833
+Not Found: /favicon.ico
+[14/May/2026 21:09:09] "GET /favicon.ico HTTP/1.1" 404 5001
+Not Found: /favicon.ico
+[14/May/2026 21:09:09] "GET /favicon.ico HTTP/1.1" 404 5001
+Not Found: /apple-touch-icon.png
+[14/May/2026 21:09:11] "GET /apple-touch-icon.png HTTP/1.1" 404 5028
+Not Found: /favicon.ico
+[14/May/2026 21:09:11] "GET /favicon.ico HTTP/1.1" 404 5001
+[14/May/2026 21:09:14] "GET /register/ HTTP/1.1" 200 5469
+[14/May/2026 21:09:15] "GET /login/ HTTP/1.1" 200 4833
+[14/May/2026 21:09:17] "POST /login/ HTTP/1.1" 302 0
+[14/May/2026 21:09:17] "GET / HTTP/1.1" 200 22594
+[14/May/2026 21:09:22] "GET /create/ HTTP/1.1" 200 5771
+[14/May/2026 21:09:25] "GET /profile/ HTTP/1.1" 200 10682
+[14/May/2026 21:09:29] "GET /news/?author=admin HTTP/1.1" 200 17037
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[14/May/2026 21:09:40] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5112
+[14/May/2026 21:10:38] "GET /news/?author=admin HTTP/1.1" 200 17037
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[14/May/2026 21:10:38] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5112
+[14/May/2026 21:10:38] "GET /static/css/style.css?v=8 HTTP/1.1" 200 22340
+[14/May/2026 21:11:25] "GET /news/?author=admin HTTP/1.1" 200 17037
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[14/May/2026 21:11:25] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5112
+[14/May/2026 21:11:25] "GET /static/css/style.css?v=8 HTTP/1.1" 200 22340
+Not Found: /robots.txt
+[14/May/2026 21:12:07] "GET /robots.txt HTTP/1.1" 404 4998
+[14/May/2026 21:12:09] "GET /news/?author=admin HTTP/1.1" 200 17037
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[14/May/2026 21:12:09] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5112
+[14/May/2026 21:12:09] "GET /static/css/style.css?v=8 HTTP/1.1" 200 22340
+[14/May/2026 21:12:10] "GET /news/?author=admin HTTP/1.1" 200 17037
+[14/May/2026 21:12:10] "GET /static/css/style.css?v=8 HTTP/1.1" 200 22340
+Not Found: /.well-known/appspecific/com.chrome.devtools.json
+[14/May/2026 21:12:10] "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 5112
+Not Found: /apple-touch-icon.png
+[14/May/2026 21:16:10] "GET /apple-touch-icon.png HTTP/1.1" 404 5028
+Not Found: /favicon.ico
+[14/May/2026 21:16:10] "GET /favicon.ico HTTP/1.1" 404 5001
