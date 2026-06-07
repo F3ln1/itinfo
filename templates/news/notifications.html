@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Уведомления - ResonateNews{% endblock %}
+
+{% block content %}
+<section class="profile_section">
+    <div class="container">
+        <div class="profile_header">
+            <h1 class="profile_title">Уведомления</h1>
+            {% if notifications %}
+            <form method="post" action="{% url 'news:mark_all_read' %}">
+                {% csrf_token %}
+                <button type="submit" class="profile-action-btn">Прочитать все</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="notifications_list">
+            {% for notification in notifications %}
+            <div class="notification_item {% if not notification.is_read %}notification_item--unread{% endif %}">
+                <div class="notification_content">
+                    <p class="notification_message">{{ notification.message }}</p>
+                    <span class="notification_date">{{ notification.created_at|date:"d E Y H:i" }}</span>
+                </div>
+                <div class="notification_actions">
+                    {% if not notification.is_read %}
+                    <form method="post" action="{% url 'news:mark_notification_read' notification.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="profile-action-btn">Прочитано</button>
+                    </form>
+                    {% endif %}
+                    {% if notification.news %}
+                    <a href="{% url 'news:news_detail' notification.news.slug %}" class="profile-action-btn">Перейти</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty_state">
+                <p>У вас нет уведомлений.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

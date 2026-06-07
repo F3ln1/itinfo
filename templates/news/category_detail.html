@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} - ResonateNews{% endblock %}
+
+{% block content %}
+<section class="category_section">
+    <div class="container">
+        <div class="category_header">
+            <a href="{% url 'news:categories' %}" class="back_link">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Все категории
+            </a>
+            <h1 class="page_title">{{ category.name }}</h1>
+            {% if category.description %}
+            <p class="page_subtitle">{{ category.description }}</p>
+            {% endif %}
+        </div>
+
+        <div class="news_grid">
+            {% for news in news_list %}
+            <article class="news_card">
+                <div class="news_image">
+                    {% if news.image %}
+                    <img src="{{ news.image.url }}" alt="{{ news.title }}">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&q=80" alt="{{ news.title }}">
+                    {% endif %}
+                    <span class="news_tag news_tag--{{ news.category }}">{{ news.get_category_display_ru }}</span>
+                </div>
+                <div class="news_content">
+                    <span class="news_date">{{ news.created_at|date:"d E Y" }}</span>
+                    <h3 class="news_title">{{ news.title }}</h3>
+                    <p class="news_excerpt">{{ news.excerpt }}</p>
+                    <div class="news_meta">
+                        <span class="news_author">{{ news.author }}</span>
+                        <span class="news_views">{{ news.views }} просмотров</span>
+                    </div>
+                    <a href="{% url 'news:news_detail' news.slug %}" class="btn-read">Читать далее</a>
+                </div>
+            </article>
+            {% empty %}
+            <div class="no-news-block">
+                <p>В этой категории пока нет новостей.</p>
+                <a href="{% url 'news:news_list' %}" class="btn-back">Ко всем новостям</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination_link">← Назад</a>
+            {% endif %}
+
+            <div class="pagination-pages">
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                    <span class="pagination-num current">{{ num }}</span>
+                    {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' or num == 1 or num == page_obj.paginator.num_pages %}
+                    <a href="?page={{ num }}" class="pagination-num">{{ num }}</a>
+                    {% elif num == page_obj.number|add:'-3' or num == page_obj.number|add:'3' %}
+                    <span class="pagination-dots">...</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination_link">Вперед →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

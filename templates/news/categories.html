@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Категории - ResonateNews{% endblock %}
+
+{% block content %}
+<section class="categories_section">
+    <div class="container">
+        <div class="page_header">
+            <h1 class="page_title">Категории</h1>
+            <p class="page_subtitle">Выберите категорию, которая вас интересует</p>
+        </div>
+        <div class="categories_grid">
+            {% for cat in categories %}
+            <a href="{% url 'news:category_detail' cat.slug %}" class="category_card" data-category="{{ cat.slug }}">
+                <div class="category_icon">
+                    {% if cat.icon == 'computer' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                    {% elif cat.icon == 'science' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 3h6v11l3 3 3-3V3"></path>
+                        <path d="M6 21h12"></path>
+                        <circle cx="12" cy="14" r="3"></circle>
+                    </svg>
+                    {% elif cat.icon == 'tech' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5"></path>
+                        <path d="M2 12l10 5 10-5"></path>
+                    </svg>
+                    {% endif %}
+                </div>
+                <h3 class="category_title">{{ cat.name }}</h3>
+                <p class="category_desc">{{ cat.description }}</p>
+                <span class="category_count">{{ cat.count }} новостей</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

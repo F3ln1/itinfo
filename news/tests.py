@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils.text import slugify
-from .models import News, SavedNews, Category
+from .models import News, SavedNews, Category, Notification
 
 
 class NewsModelTest(TestCase):
@@ -537,20 +537,20 @@ class SaveUnsaveNewsTest(TestCase):
         )
 
     def test_save_news_redirects_anonymous(self):
-        response = self.client.get(
+        response = self.client.post(
             reverse('news:save_news', kwargs={'slug': self.news.slug})
         )
         self.assertRedirects(response, reverse('news:login'))
 
     def test_unsave_news_redirects_anonymous(self):
-        response = self.client.get(
+        response = self.client.post(
             reverse('news:unsave_news', kwargs={'slug': self.news.slug})
         )
         self.assertRedirects(response, reverse('news:login'))
 
     def test_save_news_creates_saved_news(self):
         self.client.login(username='testuser', password='testpass123')
-        response = self.client.get(
+        response = self.client.post(
             reverse('news:save_news', kwargs={'slug': self.news.slug})
         )
         self.assertRedirects(
@@ -564,7 +564,7 @@ class SaveUnsaveNewsTest(TestCase):
     def test_save_news_does_not_create_duplicates(self):
         self.client.login(username='testuser', password='testpass123')
         SavedNews.objects.create(user=self.user, news=self.news)
-        self.client.get(
+        self.client.post(
             reverse('news:save_news', kwargs={'slug': self.news.slug})
         )
         self.assertEqual(
@@ -575,7 +575,7 @@ class SaveUnsaveNewsTest(TestCase):
     def test_unsave_news_removes_saved_news(self):
         self.client.login(username='testuser', password='testpass123')
         SavedNews.objects.create(user=self.user, news=self.news)
-        self.client.get(
+        self.client.post(
             reverse('news:unsave_news', kwargs={'slug': self.news.slug})
         )
         self.assertFalse(
@@ -618,3 +618,90 @@ class NewsListViewPaginationAndFilteringTest(TestCase):
         )
         news_science = News.objects.filter(category='science', status='published')
         self.assertEqual(len(response.context['news_list']), min(6, news_science.count()))
+
+
+class NotificationTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='testuser', password='testpass123', email='test@example.com'
+        )
+        self.news = News.objects.create(
+            title='Test News',
+            slug='test-news',
+            content='Content',
+            excerpt='Excerpt',
+            category='it',
+            author=self.user,
+            status='pending',
+        )
+
+    def test_notification_created_on_publish(self):
+        self.news.status = 'published'
+        self.news.save()
+        self.assertEqual(Notification.objects.count(), 1)
+        notification = Notification.objects.first()
+        self.assertEqual(notification.user, self.user)
+        self.assertIn('опубликована', notification.message)
+
+    def test_notification_created_on_reject(self):
+        self.news.status = 'rejected'
+        self.news.rejection_reason = 'Спам'
+        self.news.save()
+        self.assertEqual(Notification.objects.count(), 1)
+        notification = Notification.objects.first()
+        self.assertEqual(notification.user, self.user)
+        self.assertIn('отклонена', notification.message)
+        self.assertIn('Спам', notification.message)
+
+    def test_no_notification_on_initial_create(self):
+        self.assertEqual(Notification.objects.count(), 0)
+
+    def test_no_notification_when_status_unchanged(self):
+        self.news.excerpt = 'Updated'
+        self.news.save()
+        self.assertEqual(Notification.objects.count(), 0)
+
+    def test_no_notification_without_author(self):
+        news2 = News.objects.create(
+            title='No Author',
+            slug='no-author',
+            content='Content',
+            excerpt='Excerpt',
+            category='science',
+            status='pending',
+        )
+        news2.status = 'published'
+        news2.save()
+        self.assertEqual(Notification.objects.count(), 0)
+
+    def test_notifications_page_redirects_anonymous(self):
+        response = self.client.get(reverse('news:notifications'))
+        self.assertRedirects(response, f"{reverse('news:login')}?next={reverse('news:notifications')}")
+
+    def test_notifications_page_shows_notifications(self):
+        self.client.login(username='testuser', password='testpass123')
+        Notification.objects.create(user=self.user, news=self.news, message='Test notify')
+        response = self.client.get(reverse('news:notifications'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Test notify', response.content.decode())
+
+    def test_mark_notification_read(self):
+        self.client.login(username='testuser', password='testpass123')
+        notification = Notification.objects.create(user=self.user, news=self.news, message='Test')
+        self.client.post(reverse('news:mark_notification_read', kwargs={'notification_id': notification.id}))
+        notification.refresh_from_db()
+        self.assertTrue(notification.is_read)
+
+    def test_mark_all_read(self):
+        self.client.login(username='testuser', password='testpass123')
+        Notification.objects.create(user=self.user, news=self.news, message='First')
+        Notification.objects.create(user=self.user, news=self.news, message='Second')
+        self.client.post(reverse('news:mark_all_read'))
+        self.assertEqual(Notification.objects.filter(is_read=False).count(), 0)
+
+    def test_unread_count_in_context(self):
+        self.client.login(username='testuser', password='testpass123')
+        Notification.objects.create(user=self.user, news=self.news, message='Unread')
+        response = self.client.get(reverse('news:home'))
+        self.assertEqual(response.context.get('unread_notifications_count'), 1)

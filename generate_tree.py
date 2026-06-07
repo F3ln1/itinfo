@@ -16,7 +16,7 @@ C_DIM = '#888899'
 fig.patch.set_facecolor(C_BG)
 ax.set_facecolor(C_BG)
 
-ax.text(3.0, 4.8, 'Структура IT-INFO', fontsize=14, fontweight='bold',
+ax.text(3.0, 4.8, 'Структура ResonateNews', fontsize=14, fontweight='bold',
         color='white', ha='center', va='center')
 
 entries = []

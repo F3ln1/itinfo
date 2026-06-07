@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Личный кабинет - IT-INFO{% endblock %}
+{% block title %}Личный кабинет - ResonateNews{% endblock %}
 
 {% block content %}
 <section class="profile-section">
@@ -9,6 +9,7 @@
             <h1>Личный кабинет</h1>
             <p class="profile-username">Пользователь: <strong>{{ user.username }}</strong></p>
             <p class="profile-email">Email: <strong>{{ user.email }}</strong></p>
+            <a href="{% url 'news:password_change' %}" class="auth-btn" style="display:inline-block;margin-top:12px;text-decoration:none">Сменить пароль</a>
         </div>
 
         <div class="profile-stats">
@@ -37,6 +38,13 @@
                             <span class="news_tag {{ news.get_category_tag_class }}">{{ news.get_category_display_ru }}</span>
                             <h3 class="profile-row_title">{{ news.title }}</h3>
                             <span class="profile-row_date">{{ news.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                        <div class="profile-row_actions">
+                            <a href="{% url 'news:edit_news' news.slug %}" class="profile-action-btn">Редактировать</a>
+                            <form method="post" action="{% url 'news:delete_news' news.slug %}" style="display:inline" onsubmit="return confirm('Удалить новость?')">
+                                {% csrf_token %}
+                                <button type="submit" class="profile-action-btn profile-action-btn--danger">Удалить</button>
+                            </form>
                         </div>
                     </article>
                     {% endfor %}
@@ -84,6 +92,13 @@
                             <h3 class="profile-row_title">{{ news.title }}</h3>
                             <p class="profile-row_reason">Причина: {{ news.rejection_reason }}</p>
                             <span class="profile-row_date">{{ news.updated_at|date:"d.m.Y" }}</span>
+                        </div>
+                        <div class="profile-row_actions">
+                            <a href="{% url 'news:edit_news' news.slug %}" class="profile-action-btn">Редактировать</a>
+                            <form method="post" action="{% url 'news:delete_news' news.slug %}" style="display:inline" onsubmit="return confirm('Удалить новость?')">
+                                {% csrf_token %}
+                                <button type="submit" class="profile-action-btn profile-action-btn--danger">Удалить</button>
+                            </form>
                         </div>
                     </article>
                     {% endfor %}

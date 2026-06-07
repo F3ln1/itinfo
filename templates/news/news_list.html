@@ -1,20 +1,36 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{% if current_author %}Публикации {{ current_author }} - IT-INFO{% else %}Все новости - IT-INFO{% endif %}{% endblock %}
+{% block title %}{% if search_query %}Поиск: {{ search_query }} - ResonateNews{% elif current_author %}Публикации {{ current_author }} - ResonateNews{% elif date_from or date_to %}Фильтр по дате - ResonateNews{% else %}Все новости - ResonateNews{% endif %}{% endblock %}
 
 {% block content %}
 <section class="news_list_section">
     <div class="container">
         <div class="news_list_header">
-            <h1 class="page_title">{% if current_author %}Публикации {{ current_author }}{% else %}Новости{% endif %}</h1>
+            <h1 class="page_title">{% if search_query %}Результаты поиска: «{{ search_query }}»{% elif current_author %}Публикации {{ current_author }}{% elif date_from or date_to %}Фильтр по дате{% else %}Новости{% endif %}</h1>
             <div class="news_tabs">
-                <a href="{% url 'news:news_list' %}{% if current_author %}?author={{ current_author }}{% endif %}" class="news_tab {% if not current_category or current_category == 'all' %}active{% endif %}">Все</a>
-                <a href="{% url 'news:news_list' %}?category=it{% if current_author %}&author={{ current_author }}{% endif %}" class="news_tab {% if current_category == 'it' %}active{% endif %}">IT</a>
-                <a href="{% url 'news:news_list' %}?category=science{% if current_author %}&author={{ current_author }}{% endif %}" class="news_tab {% if current_category == 'science' %}active{% endif %}">Наука</a>
-                <a href="{% url 'news:news_list' %}?category=tech{% if current_author %}&author={{ current_author }}{% endif %}" class="news_tab {% if current_category == 'tech' %}active{% endif %}">Техника</a>
+                <a href="{% url 'news:news_list' %}{% if current_author %}?author={{ current_author }}{% endif %}{% if search_query %}{% if current_author %}&{% else %}?{% endif %}q={{ search_query }}{% endif %}{% if date_from %}{% if current_author or search_query %}&{% else %}?{% endif %}date_from={{ date_from }}{% endif %}{% if date_to %}{% if current_author or search_query or date_from %}&{% else %}?{% endif %}date_to={{ date_to }}{% endif %}" class="news_tab {% if not current_category or current_category == 'all' %}active{% endif %}">Все</a>
+                <a href="{% url 'news:news_list' %}?category=it{% if current_author %}&author={{ current_author }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" class="news_tab {% if current_category == 'it' %}active{% endif %}">IT</a>
+                <a href="{% url 'news:news_list' %}?category=science{% if current_author %}&author={{ current_author }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" class="news_tab {% if current_category == 'science' %}active{% endif %}">Наука</a>
+                <a href="{% url 'news:news_list' %}?category=tech{% if current_author %}&author={{ current_author }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" class="news_tab {% if current_category == 'tech' %}active{% endif %}">Техника</a>
             </div>
         </div>
+
+        <form class="date_filter" method="get">
+            <label class="date_filter_label">С
+                <input type="date" name="date_from" value="{{ date_from }}" class="date_filter_input">
+            </label>
+            <label class="date_filter_label">По
+                <input type="date" name="date_to" value="{{ date_to }}" class="date_filter_input">
+            </label>
+            {% if current_category and current_category != 'all' %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
+            {% if current_author %}<input type="hidden" name="author" value="{{ current_author }}">{% endif %}
+            {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
+            <button type="submit" class="profile-action-btn">Фильтр</button>
+            {% if date_from or date_to %}
+            <a href="?{% if current_category and current_category != 'all' %}category={{ current_category }}&{% endif %}{% if current_author %}author={{ current_author }}&{% endif %}{% if search_query %}q={{ search_query }}{% endif %}" class="profile-action-btn">Сбросить</a>
+            {% endif %}
+        </form>
 
         <div class="news_grid">
             {% for news in news_list %}
@@ -40,8 +56,16 @@
             </article>
             {% empty %}
             <div class="no-news-block">
-                <p>Новостей пока нет. Добавьте первую новость через админку!</p>
-                <a href="{% url 'news:home' %}" class="btn-back">На главную</a>
+                    {% if search_query %}
+                    <p>По запросу «{{ search_query }}» ничего не найдено.</p>
+                    <a href="{% url 'news:news_list' %}" class="btn-back">Сбросить поиск</a>
+                    {% elif date_from or date_to %}
+                    <p>Новостей за выбранный период не найдено.</p>
+                    <a href="{% url 'news:news_list' %}" class="btn-back">Сбросить фильтр</a>
+                    {% else %}
+                    <p>Новостей пока нет. Добавьте первую новость через админку!</p>
+                    <a href="{% url 'news:home' %}" class="btn-back">На главную</a>
+                    {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -49,7 +73,7 @@
         {% if page_obj.has_other_pages %}
         <div class="pagination">
             {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}{% if current_category and current_category != 'all' %}&category={{ current_category }}{% endif %}{% if current_author %}&author={{ current_author }}{% endif %}" class="pagination_link">← Назад</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if current_category and current_category != 'all' %}&category={{ current_category }}{% endif %}{% if current_author %}&author={{ current_author }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" class="pagination_link">← Назад</a>
             {% endif %}
 
             <div class="pagination-pages">
@@ -57,7 +81,7 @@
                     {% if num == page_obj.number %}
                     <span class="pagination-num current">{{ num }}</span>
                     {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' or num == 1 or num == page_obj.paginator.num_pages %}
-                    <a href="?page={{ num }}{% if current_category and current_category != 'all' %}&category={{ current_category }}{% endif %}{% if current_author %}&author={{ current_author }}{% endif %}" class="pagination-num">{{ num }}</a>
+                    <a href="?page={{ num }}{% if current_category and current_category != 'all' %}&category={{ current_category }}{% endif %}{% if current_author %}&author={{ current_author }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" class="pagination-num">{{ num }}</a>
                     {% elif num == page_obj.number|add:'-3' or num == page_obj.number|add:'3' %}
                     <span class="pagination-dots">...</span>
                     {% endif %}
@@ -67,15 +91,28 @@
             <form class="pagination-jump" method="get">
                 {% if current_category and current_category != 'all' %}<input type="hidden" name="category" value="{{ current_category }}">{% endif %}
                 {% if current_author %}<input type="hidden" name="author" value="{{ current_author }}">{% endif %}
+                {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
+                {% if date_from %}<input type="hidden" name="date_from" value="{{ date_from }}">{% endif %}
+                {% if date_to %}<input type="hidden" name="date_to" value="{{ date_to }}">{% endif %}
                 <input type="number" name="page" min="1" max="{{ page_obj.paginator.num_pages }}" placeholder="№" class="pagination-jump_input">
                 <button type="submit" class="pagination-jump_btn">Перейти</button>
             </form>
 
             {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}{% if current_category and current_category != 'all' %}&category={{ current_category }}{% endif %}{% if current_author %}&author={{ current_author }}{% endif %}" class="pagination_link">Вперед →</a>
+            <a href="?page={{ page_obj.next_page_number }}{% if current_category and current_category != 'all' %}&category={{ current_category }}{% endif %}{% if current_author %}&author={{ current_author }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" class="pagination_link">Вперед →</a>
             {% endif %}
         </div>
         {% endif %}
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script nonce="{{ csp_nonce }}">
+document.querySelectorAll('.date_filter_input').forEach(function(input) {
+    input.addEventListener('click', function(e) {
+        this.showPicker();
+    });
+});
+</script>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}IT-INFO - Главная{% endblock %}
+{% block title %}ResonateNews - Главная{% endblock %}
 
 {% block content %}
 <section class="hero">
@@ -12,7 +12,7 @@
             <p class="hero_text">Будьте в курсе последних событий в мире IT, науки и техники. Актуальные новости и аналитика каждый день.</p>
             <div class="hero_stats">
                 <div class="hero_stat">
-                    <span class="hero_stat-num">{{ news_list|length|add:100 }}</span>
+                    <span class="hero_stat-num">{{ total_news }}</span>
                     <span class="hero_stat-label">Новостей</span>
                 </div>
                 <div class="hero_stat">
@@ -31,7 +31,7 @@
 <section class="categories" id="categories">
     <div class="container">
         <div class="categories_grid">
-            <a href="{% url 'news:news_list' %}?category=it" class="category_card" data-category="it">
+            <a href="{% url 'news:category_detail' 'it' %}" class="category_card" data-category="it">
                 <div class="category_icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
@@ -42,7 +42,7 @@
                 <h3 class="category_title">IT-технологии</h3>
                 <p class="category_desc">Программирование, AI, облачные технологии</p>
             </a>
-            <a href="{% url 'news:news_list' %}?category=science" class="category_card" data-category="science">
+            <a href="{% url 'news:category_detail' 'science' %}" class="category_card" data-category="science">
                 <div class="category_icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 3h6v11l3 3 3-3V3"></path>
@@ -53,7 +53,7 @@
                 <h3 class="category_title">Наука</h3>
                 <p class="category_desc">Исследования, открытия, космос</p>
             </a>
-            <a href="{% url 'news:news_list' %}?category=tech" class="category_card" data-category="tech">
+            <a href="{% url 'news:category_detail' 'tech' %}" class="category_card" data-category="tech">
                 <div class="category_icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
@@ -123,6 +123,7 @@
                                 <span class="news_author">{{ news.author }}</span>
                                 <span class="news_views">{{ news.views }} просмотров</span>
                             </div>
+                            <a href="{% url 'news:news_detail' news.slug %}" class="btn-read">Читать далее</a>
                         </div>
                     </article>
                     {% empty %}
@@ -151,8 +152,9 @@
                 <div class="sidebar_block">
                     <h3 class="sidebar_title">Подписка</h3>
                     <p class="sidebar_text">Получайте самые важные новости на вашу почту</p>
-                    <form class="subscribe_form">
-                        <input type="email" placeholder="Ваш email" class="subscribe_input">
+                    <form class="subscribe_form" method="post" action="{% url 'news:subscribe' %}">
+                        {% csrf_token %}
+                        <input type="email" name="email" placeholder="Ваш email" class="subscribe_input" required>
                         <button type="submit" class="subscribe_btn">Подписаться</button>
                     </form>
                 </div>

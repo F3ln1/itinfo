@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ news.title }} - IT-INFO{% endblock %}
+{% block title %}{{ news.title }} - ResonateNews{% endblock %}
 
 {% block content %}
 <section class="news_detail">
@@ -42,10 +42,25 @@
                 {% if user.is_authenticated %}
                 <div class="save_block">
                     {% if is_saved %}
-                    <a href="{% url 'news:unsave_news' news.slug %}" class="save_link saved">Сохранено</a>
+                    <form method="post" action="{% url 'news:unsave_news' news.slug %}">
+                        {% csrf_token %}
+                        <button type="submit" class="profile-action-btn profile-action-btn--active">Сохранено</button>
+                    </form>
                     {% else %}
-                    <a href="{% url 'news:save_news' news.slug %}" class="save_link">Сохранить</a>
+                    <form method="post" action="{% url 'news:save_news' news.slug %}">
+                        {% csrf_token %}
+                        <button type="submit" class="profile-action-btn">Сохранить</button>
+                    </form>
                     {% endif %}
+                </div>
+                {% endif %}
+                {% if user == news.author %}
+                <div class="news_actions">
+                    <a href="{% url 'news:edit_news' news.slug %}" class="profile-action-btn">Редактировать</a>
+                    <form method="post" action="{% url 'news:delete_news' news.slug %}" style="display:inline" onsubmit="return confirm('Удалить новость?')">
+                        {% csrf_token %}
+                        <button type="submit" class="profile-action-btn profile-action-btn--danger">Удалить</button>
+                    </form>
                 </div>
                 {% endif %}
                 <div class="share_block">
@@ -56,6 +71,75 @@
                 </div>
             </footer>
         </article>
+
+        <section class="comments_section">
+            <h2 class="section_title">Комментарии ({{ comments|length }})</h2>
+
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'news:add_comment' news.slug %}" class="comment_form">
+                {% csrf_token %}
+                {{ comment_form.text }}
+                <button type="submit" class="auth-btn" style="margin-top:10px">Отправить</button>
+            </form>
+            {% else %}
+            <p class="empty-message"><a href="{% url 'news:login' %}">Войдите</a>, чтобы оставить комментарий.</p>
+            {% endif %}
+
+            <div class="comments_list">
+                {% for comment in comments %}
+                {% if not comment.parent %}
+                <div class="comment_card">
+                    <div class="comment_header">
+                        <span class="comment_author">{{ comment.author.username }}</span>
+                        <span class="comment_date">{{ comment.created_at|date:"d.m.Y H:i" }}</span>
+                        {% if user.is_authenticated %}
+                        <button class="comment_reply_btn" data-comment-id="{{ comment.id }}">Ответить</button>
+                        {% endif %}
+                        {% if user == comment.author %}
+                        <form method="post" action="{% url 'news:delete_comment' news.slug comment.id %}" style="margin-left:auto" onsubmit="return confirm('Удалить комментарий?')">
+                            {% csrf_token %}
+                            <button type="submit" class="comment_delete">×</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    <p class="comment_text">{{ comment.text }}</p>
+
+                    {% if comment.replies.all %}
+                    <div class="comment_replies">
+                        {% for reply in comment.replies.all %}
+                        <div class="comment_card comment_card--reply">
+                            <div class="comment_header">
+                                <span class="comment_author">{{ reply.author.username }}</span>
+                                <span class="comment_date">{{ reply.created_at|date:"d.m.Y H:i" }}</span>
+                                {% if user == reply.author %}
+                                <form method="post" action="{% url 'news:delete_comment' news.slug reply.id %}" style="margin-left:auto" onsubmit="return confirm('Удалить комментарий?')">
+                                    {% csrf_token %}
+                                    <button type="submit" class="comment_delete">×</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            <p class="comment_text">{{ reply.text }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'news:add_comment' news.slug %}" class="comment_reply_form" data-comment-id="{{ comment.id }}">
+                        {% csrf_token %}
+                        <input type="hidden" name="parent" value="{{ comment.id }}">
+                        <textarea name="text" class="form-input" placeholder="Напишите ответ..." rows="2"></textarea>
+                        <div class="comment_reply_actions">
+                            <button type="submit" class="profile-action-btn">Ответить</button>
+                            <button type="button" class="comment_reply_cancel">Отмена</button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+                {% empty %}
+                <p class="empty-message">Комментариев пока нет.</p>
+                {% endfor %}
+            </div>
+        </section>
 
         <section class="related_news">
             <h2 class="section_title">Похожие новости</h2>
@@ -83,4 +167,31 @@
         </section>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script nonce="{{ csp_nonce }}">
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.comment_reply_btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var form = this.closest('.comment_card').querySelector('.comment_reply_form');
+            if (form) {
+                form.classList.toggle('is-visible');
+                if (form.classList.contains('is-visible')) {
+                    form.querySelector('textarea').focus();
+                }
+            }
+        });
+    });
+    document.querySelectorAll('.comment_reply_cancel').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var form = this.closest('.comment_reply_form');
+            if (form) {
+                form.classList.remove('is-visible');
+                form.querySelector('textarea').value = '';
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

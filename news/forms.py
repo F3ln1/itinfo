@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import News
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm, PasswordResetForm, SetPasswordForm
+from .models import News, Comment, Subscription
 
 
 class RegisterForm(UserCreationForm):
@@ -94,5 +94,58 @@ class NewsForm(forms.ModelForm):
             }),
             'image': forms.ClearableFileInput(attrs={
                 'class': 'form-input'
+            }),
+        }
+
+
+class PasswordChangeCustomForm(PasswordChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-input'
+
+
+class PasswordResetCustomForm(PasswordResetForm):
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'Email'
+        })
+    )
+
+
+class SetPasswordCustomForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-input'
+
+
+class SubscribeForm(forms.ModelForm):
+    class Meta:
+        model = Subscription
+        fields = ['email']
+        widgets = {
+            'email': forms.EmailInput(attrs={
+                'class': 'subscribe_input',
+                'placeholder': 'Ваш email',
+            }),
+        }
+
+
+class CommentForm(forms.ModelForm):
+    parent = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+
+    class Meta:
+        model = Comment
+        fields = ['text']
+        labels = {
+            'text': 'Комментарий',
+        }
+        widgets = {
+            'text': forms.Textarea(attrs={
+                'class': 'form-input',
+                'placeholder': 'Напишите комментарий...',
+                'rows': 3,
             }),
         }

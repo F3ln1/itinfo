@@ -86,7 +86,7 @@ arrow(5.6, 2.9, 2.75, 2.7, '#f6a025', 'arc3,rad=-0.1')
 arrow(7.5, 2.9, 7.0, 2.7, '#7c3aed', 'arc3,rad=0.1')
 
 # === Title ===
-ax.text(FIG_W/2, 7.85, 'Архитектура IT-INFO (MVT)', fontsize=15, fontweight='bold',
+ax.text(FIG_W/2, 7.85, 'Архитектура ResonateNews (MVT)', fontsize=15, fontweight='bold',
         color='white', ha='center', va='center')
 
 ax.text(FIG_W/2, 7.6, 'Django 6.0.4 + PostgreSQL', fontsize=8, color='#aaaaaa',
