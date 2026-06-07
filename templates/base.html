@@ -101,8 +101,8 @@
                     <h4>Навигация</h4>
                     <a href="{% url 'news:news_list' %}">Новости</a>
                     <a href="{% url 'news:categories' %}">Категории</a>
-                    <a href="#">О проекте</a>
-                    <a href="#">Контакты</a>
+                    <a href="{% url 'news:about' %}">О проекте</a>
+                    <a href="{% url 'news:contacts' %}">Контакты</a>
                 </div>
                 <div class="footer_links">
                     <h4>Категории</h4>
@@ -112,10 +112,7 @@
                 </div>
                 <div class="footer_links">
                     <h4>Связаться</h4>
-                    <a href="#">info@itinfo.ru</a>
-                    <a href="#">Telegram</a>
-                    <a href="#">Twitter</a>
-                    <a href="#">YouTube</a>
+                    <a href="mailto:resonate@mail.ru">resonate@mail.ru</a>
                 </div>
             </div>
             <div class="footer_bottom">

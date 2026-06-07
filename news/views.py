@@ -363,6 +363,14 @@ def mark_all_read(request):
     return redirect('news:notifications')
 
 
+def about(request):
+    return render(request, 'pages/about.html')
+
+
+def contacts(request):
+    return render(request, 'pages/contacts.html')
+
+
 def subscribe(request):
     if request.method != 'POST':
         return redirect('news:home')

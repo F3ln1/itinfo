@@ -1910,6 +1910,41 @@ select.form-input {
     color: var(--bg-secondary);
 }
 
+.about_section {
+    padding: 60px 0 100px;
+    background: var(--bg-secondary);
+    min-height: calc(100vh - 300px);
+}
+
+.content_block {
+    max-width: 800px;
+    margin: 40px auto 0;
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 50px;
+    box-shadow: var(--card-shadow);
+}
+
+.content_block p {
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin: 0 0 20px;
+}
+
+.content_block p:last-child {
+    margin-bottom: 0;
+}
+
+.content_block a {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.content_block a:hover {
+    text-decoration: underline;
+}
+
 .profile_header {
     display: flex;
     align-items: center;
