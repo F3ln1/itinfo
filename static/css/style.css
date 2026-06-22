@@ -119,31 +119,6 @@ body {
     border-bottom: 1px solid var(--border-light);
 }
 
-.theme-toggle {
-    background: var(--toggle-bg);
-    border: 2px solid var(--toggle-border);
-    border-radius: 10px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    flex-shrink: 0;
-    padding: 0;
-    font-size: 20px;
-    line-height: 1;
-}
-
-.theme-toggle:hover {
-    border-color: var(--accent);
-}
-
-.theme-icon {
-    line-height: 1;
-}
-
 .container {
     max-width: 1300px;
     margin: 0 auto;
@@ -424,6 +399,8 @@ a {
     display: flex;
     flex-direction: column;
     box-shadow: var(--card-shadow);
+    text-decoration: none;
+    color: inherit;
 }
 
 .news_card:hover {
@@ -1374,6 +1351,52 @@ a {
     opacity: 0.9;
 }
 
+.checkbox-group {
+    margin: 6px 0 24px;
+}
+
+.checkbox-label {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    max-width: 100%;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px !important;
+    min-width: 18px !important;
+    max-width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+    margin: 2px 0 0 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-sizing: border-box !important;
+}
+
+.checkbox-text {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    user-select: none;
+    display: inline;
+}
+
+.checkbox-text a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.checkbox-text a:hover {
+    text-decoration: underline;
+}
+
 select.form-input {
     cursor: pointer;
     appearance: none;
@@ -1776,6 +1799,19 @@ select.form-input {
 
 .dropdown_item--danger:hover svg {
     color: var(--color-red);
+}
+
+.dropdown_item-theme {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.dropdown_item-theme:hover svg {
+    color: var(--accent);
 }
 
 .dropdown_badge {

@@ -63,12 +63,6 @@
                     </form>
                 </div>
                 {% endif %}
-                <div class="share_block">
-                    <span>Поделиться:</span>
-                    <a href="#" class="share_link">Telegram</a>
-                    <a href="#" class="share_link">Twitter</a>
-                    <a href="#" class="share_link">VK</a>
-                </div>
             </footer>
         </article>
 
@@ -145,7 +139,7 @@
             <h2 class="section_title">Похожие новости</h2>
             <div class="related_grid">
                 {% for related in related_news %}
-                <article class="news_card">
+                <a href="{% url 'news:news_detail' slug=related.slug %}" class="news_card">
                     <div class="news_image">
                         {% if related.image %}
                         <img src="{{ related.image.url }}" alt="{{ related.title }}">
@@ -161,7 +155,7 @@
                             <span class="news_views">{{ related.views }} просмотров</span>
                         </div>
                     </div>
-                </article>
+                </a>
                 {% endfor %}
             </div>
         </section>

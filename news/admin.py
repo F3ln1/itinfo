@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import News, Category, SavedNews, Comment, Subscription, Notification
+from .models import News, SavedNews, Comment, Subscription, Notification
 
 
 @admin.register(News)
@@ -23,12 +23,6 @@ class NewsAdmin(admin.ModelAdmin):
             news.status = 'rejected'
             news.rejection_reason = 'Отклонено модератором'
             news.save()
-
-
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug')
-    prepopulated_fields = {'slug': ('name',)}
 
 
 @admin.register(SavedNews)

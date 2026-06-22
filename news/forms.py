@@ -33,6 +33,17 @@ class RegisterForm(UserCreationForm):
         })
     )
 
+    consent = forms.BooleanField(
+        required=True,
+        label='',
+        widget=forms.CheckboxInput(attrs={
+            'class': 'form-checkbox',
+        }),
+        error_messages={
+            'required': 'Необходимо согласие на обработку персональных данных',
+        },
+    )
+
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2')

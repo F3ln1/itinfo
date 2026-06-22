@@ -22,6 +22,7 @@
             {% endif %}
             
             {% for field in form %}
+            {% if field.name != 'consent' %}
             <div class="form-group">
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
@@ -29,7 +30,18 @@
                 <span class="field-error">{{ field.errors.0 }}</span>
                 {% endif %}
             </div>
+            {% endif %}
             {% endfor %}
+            
+            <div class="checkbox-group">
+                <label for="{{ form.consent.id_for_label }}" class="checkbox-label">
+                    {{ form.consent }}
+                    <span class="checkbox-text">Я согласен на <a href="{% url 'news:privacy_policy' %}" target="_blank">обработку персональных данных</a></span>
+                </label>
+                {% if form.consent.errors %}
+                <span class="field-error">{{ form.consent.errors.0 }}</span>
+                {% endif %}
+            </div>
             
             <button type="submit" class="auth-btn">Зарегистрироваться</button>
         </form>

@@ -7,17 +7,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap" rel="stylesheet">
-    {% load static %}<link rel="stylesheet" href="{% static 'css/style.css' %}?v=9">
-    <script src="{% static 'js/theme.js' %}"></script>
+    {% load static %}<link rel="stylesheet" href="{% static 'css/style.css' %}?v=10">
+    <script src="{% static 'js/theme.js' %}?v=1"></script>
 </head>
 <body>
     <header class="header">
         <div class="container">
             <a href="{% url 'news:home' %}" class="logo">ResonateNews</a>
-
-            <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
-                <span class="theme-icon"></span>
-            </button>
 
             <form class="search_form" action="{% url 'news:news_list' %}" method="get">
                 <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -61,6 +57,12 @@
                             Профиль
                         </a>
                         <div class="dropdown_divider"></div>
+                        <button class="dropdown_item dropdown_item-theme" id="themeToggle">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                            </svg>
+                            <span class="theme-text">Тёмная тема</span>
+                        </button>
                         <a href="{% url 'news:logout' %}" class="dropdown_item dropdown_item--danger">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>

@@ -2,7 +2,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import News, Notification
+from .models import News, Notification, Subscription
 
 
 @receiver(pre_save, sender=News)
@@ -37,6 +37,24 @@ def notify_status_change(sender, instance, **kwargs):
                             f'Спасибо за ваш вклад!\n--\nResonateNews',
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[instance.author.email],
+                    fail_silently=True,
+                )
+            except Exception:
+                pass
+
+        subscriber_emails = Subscription.objects.values_list('email', flat=True)
+        if subscriber_emails:
+            try:
+                send_mail(
+                    subject=f'Новая новость: {instance.title} — ResonateNews',
+                    message=f'Здравствуйте!\n\n'
+                            f'На сайте ResonateNews опубликована новая новость:\n'
+                            f'«{instance.title}»\n\n'
+                            f'{instance.excerpt}\n\n'
+                            f'Читать полностью: http://localhost:8000/news/{instance.slug}/\n\n'
+                            f'--\nResonateNews',
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=list(subscriber_emails),
                     fail_silently=True,
                 )
             except Exception:

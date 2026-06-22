@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView, FormView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, FormView, UpdateView, DeleteView, TemplateView
 from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import time
+from django.contrib.auth.models import User
 from .models import News, SavedNews, Comment, Subscription, Notification
 from .forms import RegisterForm, LoginForm, NewsForm, CommentForm
 
@@ -90,10 +91,14 @@ def home(request):
     news_qs = News.objects.filter(status='published')
     news_list = news_qs[:6]
     featured_news = news_qs.first()
+    total_authors = User.objects.filter(news__status='published').distinct().count()
+    total_readers = User.objects.count()
     return render(request, 'news/home.html', {
         'news_list': news_list,
         'featured_news': featured_news,
         'total_news': news_qs.count(),
+        'total_authors': total_authors,
+        'total_readers': total_readers,
     })
 
 
@@ -369,6 +374,10 @@ def about(request):
 
 def contacts(request):
     return render(request, 'pages/contacts.html')
+
+
+class PrivacyPolicyView(TemplateView):
+    template_name = 'pages/privacy.html'
 
 
 def subscribe(request):

@@ -27,6 +27,7 @@ urlpatterns = [
     path('notifications/read-all/', views.mark_all_read, name='mark_all_read'),
     path('about/', views.about, name='about'),
     path('contacts/', views.contacts, name='contacts'),
+    path('privacy/', views.PrivacyPolicyView.as_view(), name='privacy_policy'),
     path('subscribe/', views.subscribe, name='subscribe'),
     path('profile/password-change/', auth_views.PasswordChangeView.as_view(
         template_name='registration/password_change_form.html',
