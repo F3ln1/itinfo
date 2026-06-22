@@ -1,6 +1,6 @@
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.core.mail import send_mail
+from django.core.mail import send_mail, get_connection
 from django.conf import settings
 from .models import News, Notification, Subscription
 
@@ -21,6 +21,8 @@ def notify_status_change(sender, instance, **kwargs):
     if old.status == instance.status:
         return
 
+    connection = get_connection(timeout=5)
+
     if instance.status == 'published':
         Notification.objects.create(
             user=instance.author,
@@ -37,6 +39,7 @@ def notify_status_change(sender, instance, **kwargs):
                             f'Спасибо за ваш вклад!\n--\nResonateNews',
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[instance.author.email],
+                    connection=connection,
                     fail_silently=True,
                 )
             except Exception:
@@ -55,6 +58,7 @@ def notify_status_change(sender, instance, **kwargs):
                             f'--\nResonateNews',
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=list(subscriber_emails),
+                    connection=connection,
                     fail_silently=True,
                 )
             except Exception:
@@ -79,6 +83,7 @@ def notify_status_change(sender, instance, **kwargs):
                             f'--\nResonateNews',
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[instance.author.email],
+                    connection=connection,
                     fail_silently=True,
                 )
             except Exception:
