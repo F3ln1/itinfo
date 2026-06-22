@@ -1,7 +1,7 @@
 import threading
+import smtplib
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.core.mail import send_mail
 from django.conf import settings
 from django.db import close_old_connections
 from .models import News, Notification, Subscription
@@ -9,13 +9,12 @@ from .models import News, Notification, Subscription
 
 def send_mail_async(subject, message, recipient_list):
     try:
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=recipient_list,
-            fail_silently=True,
-        )
+        server = smtplib.SMTP(settings.EMAIL_HOST, 587, timeout=10)
+        server.starttls()
+        server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+        text = f'Subject: {subject}\nContent-Type: text/plain; charset="utf-8"\n\n{message}'
+        server.sendmail(settings.DEFAULT_FROM_EMAIL, recipient_list, text.encode('utf-8'))
+        server.quit()
     except Exception:
         pass
     finally:
